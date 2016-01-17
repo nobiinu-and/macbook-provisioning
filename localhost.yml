@@ -26,39 +26,60 @@
       - { name: pkg-config }
       - { name: ctags }
       - { name: tree }
+      # ファイルの中身を表示
       - { name: lv }
       - { name: nkf }
+      # JSONを超絶に読みやすくする
       - { name: jq }
       - { name: go }
+      # ディレクトリがカレントになったとき指定した環境変数を有効にする
       - { name: direnv }
+      # コマンドのインクリメンタルサーチ
       - { name: peco }
+      # GitHubをCUIで操作
       - { name: hub }
+      # Git用CUIリポジトリブラウザ
       - { name: tig }
+      # Fish-Shell かわいいらしい
       - { name: fish }
       - { name: rbenv }
       - { name: ruby-build }
+      # テキストファイルのエンコーディングを変換する
       - { name: tofrodos }
       - { name: lha }
+      # FTP/SFTPクライアント
       - { name: flow }
       - { name: mysql }
+      - { name: postgresql }
       - { name: sqlite }
       - { name: redis }
       - { name: imagemagick }
       - { name: mercurial }
+      # マシンイメージの自動生成や管理をするコマンドラインツール
       - { name: packer }
+      # xz形式の圧縮・解凍
       - { name: xz }
+      # Socketの操作が捗りまくる
       - { name: socat }
+      # readlineラッパー (sqlplusなどにコマンド履歴を使える?)
       - { name: rlwrap }
       - { name: w3m }
+      # Terminalを多重化?
       - { name: tmux }
+      # tmuxでクリップボードを使えるようにする
       - { name: reattach-to-user-namespace }
       - { name: phantomjs }
       - { name: graphviz }
+      # ディレクトリの移動が超絶楽
       - { name: autojump }
+      # コマンド一発で.gitignoreを追加
       - { name: gibo }
       - { name: source-highlight }
+      - { name: docker }
+      - { name: docker-machine }
+      - { name: typesafe-activator }
+      - { name: nvm }
     homebrew_cask_packages:
-      - { name: emacs-mac }
       - { name: iterm2 }
       - { name: firefox }
       - { name: google-chrome }
@@ -66,21 +87,28 @@
       - { name: java }
       - { name: skype }
       - { name: slack }
+      - { name: dropbox }
       - { name: sourcetree }
       - { name: gitx }
+      - { name: chefdk }
+      # キーバインディングのカスタマイズ
       - { name: karabiner }
       - { name: seil }
-      - { name: flux }
+      # 様々なAPIリファレンスを高速に検索できる
       - { name: dash }
+      # Evernoteに図形、スタンプを描き込める?
       - { name: skitch }
+      # Cocoa frameworkのためのイメージエディタ
       - { name: seashore }
       - { name: atom }
+      # プログラミングのメモやスニペットの記録に最適なMacアプリ
       - { name: kobito }
-      - { name: webstorm }
-      - { name: phpstorm }
       - { name: intellij-idea }
       - { name: vagrant }
       - { name: virtualbox }
+      - { name: android-studio }
+      - { name: silverlight }
+      - { name: flash-player }
 
   tasks:
     - name: homebrew の tap リポジトリを追加
@@ -109,8 +137,8 @@
       with_items: brew_result.results | selectattr('changed') | map(attribute='item') | map(attribute='name') | list
 
     # cask
-    - name: homebrew-cask のインストール
-      homebrew: name=brew-cask state=latest
+    #- name: homebrew-cask のインストール
+    #  homebrew: name=brew-cask state=latest
     - name: cask パッケージをインストール
       homebrew_cask: name={{ item.name }} state={{ item.state|default('installed') }}
       with_items: homebrew_cask_packages
@@ -139,6 +167,20 @@
       args:
         creates: ~/Library/Fonts/Ricty-Bold.ttf
       notify: run fc-cache
+
+    # nvm
+    - name: .zshrcに設定追加 (for nvm)
+      lineinfile: >
+        dest=~/.zshrc
+        line='source $(brew --prefix nvm)/nvm.sh'
+    - name: Node.jsインストール
+      shell: source $(brew --prefix nvm)/nvm.sh && nvm install v0.10.26
+    
+    # docker-compose
+    - name: link docker
+      shell: brew link --overwrite docker
+    - name: install docker-compose
+      shell: brew install docker-compose
 
   handlers:
     - name: run fc-cache
