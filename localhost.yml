@@ -6,6 +6,7 @@
     homebrew_taps:
       - homebrew/binary
       - homebrew/dupes
+      - homebrew/science
       - caskroom/cask
       - railwaycat/emacsmacport
       - sanemat/font
@@ -79,6 +80,7 @@
       - { name: docker-machine }
       - { name: typesafe-activator }
       - { name: nvm }
+      - { name: opencv }
     homebrew_cask_packages:
       - { name: iterm2 }
       - { name: firefox }
